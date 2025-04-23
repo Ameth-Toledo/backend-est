@@ -3,7 +3,9 @@ package controllers
 import (
 	"estsoftware/src/comments/application"
 	"estsoftware/src/comments/domain/entities"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 type CreateCommentController struct {
@@ -21,9 +23,13 @@ func (cc *CreateCommentController) Execute(context *gin.Context) {
 		return
 	}
 
+	if comment.Fecha.IsZero() {
+		comment.Fecha = time.Now()
+	}
+
 	createdComment, err := cc.useCase.Execute(comment)
 	if err != nil {
-		context.JSON(500, gin.H{"error": "No se pudo crear el comentario"})
+		context.JSON(500, gin.H{"error": fmt.Sprintf("No se pudo crear el comentario: %v", err)})
 		return
 	}
 

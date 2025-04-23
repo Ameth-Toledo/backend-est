@@ -1,6 +1,8 @@
 package main
 
 import (
+	commentInfra "estsoftware/src/comments/infrastructure"
+	commentRoutes "estsoftware/src/comments/infrastructure/routes"
 	courseInfra "estsoftware/src/course/infrastructure"
 	courseRoutes "estsoftware/src/course/infrastructure/routes"
 	inscriptionInfra "estsoftware/src/inscription/infrastructure"
@@ -85,6 +87,15 @@ func main() {
 		inscriptionDependencies.GetInscriptionByID,
 		inscriptionDependencies.DeleteInscription,
 		inscriptionDependencies.UpdateInscription,
+	)
+
+	commentsDependencies := commentInfra.InitComments()
+	commentRoutes.ConfigureCommentsRoutes(r,
+		commentsDependencies.CreateCommentController,
+		commentsDependencies.GetAllCommentController,
+		commentsDependencies.GetByIDCommentController,
+		commentsDependencies.UpdateCommentController,
+		commentsDependencies.DeleteCommentController,
 	)
 
 	r.Run(":8080")
