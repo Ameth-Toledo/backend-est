@@ -44,7 +44,7 @@ func (m *MySQL) GetAll() ([]entities.Comment, error) {
 	for rows.Next() {
 		var c entities.Comment
 		var cursoID sql.NullInt32
-		var fecha []byte // Cambiamos para leer el tipo como []byte
+		var fecha []byte 
 		err := rows.Scan(&c.ID, &c.UsuarioID, &cursoID, &c.Contenido, &fecha)
 		if err != nil {
 			return nil, fmt.Errorf("error al escanear los datos: %v", err)
@@ -54,9 +54,8 @@ func (m *MySQL) GetAll() ([]entities.Comment, error) {
 			c.CursoID = &cursoID.Int32
 		}
 
-		// Convertimos la fecha manualmente
 		if len(fecha) > 0 {
-			parsedFecha, err := time.Parse("2006-01-02 15:04:05", string(fecha)) // Cambiamos el formato de fecha
+			parsedFecha, err := time.Parse("2006-01-02 15:04:05", string(fecha)) 
 			if err != nil {
 				return nil, fmt.Errorf("error al convertir la fecha: %v", err)
 			}
