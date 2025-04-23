@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -26,6 +27,7 @@ func (cc_c *CreateUserController) Execute(c *gin.Context) {
 
 	var input entities.User
 	input.Nombre = strings.TrimSpace(c.PostForm("nombre"))
+	input.Apellido = strings.TrimSpace(c.PostForm("apellido"))
 	input.Correo = strings.TrimSpace(c.PostForm("correo"))
 	input.Contrasena = strings.TrimSpace(c.PostForm("contrasena"))
 	input.Plan = strings.TrimSpace(c.PostForm("plan"))
@@ -33,11 +35,25 @@ func (cc_c *CreateUserController) Execute(c *gin.Context) {
 		input.Plan = "gratuito"
 	}
 
+	rolIDStr := c.PostForm("rol_id")
+	rolID := 1
+	if rolIDStr != "" {
+		var parseErr error
+		rolID, parseErr = strconv.Atoi(rolIDStr)
+		if parseErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "rol_id invalido"})
+			return
+		}
+	}
+
+	rolIDConverted := int32(rolID)
+	input.RolID = &rolIDConverted
+
 	var photoFile []byte
 	var fileName string
 
 	file, header, err := c.Request.FormFile("foto_perfil")
-	if err == nil {
+	if err == nil && file != nil {
 		defer file.Close()
 
 		fileExt := filepath.Ext(header.Filename)
